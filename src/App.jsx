@@ -1,11 +1,12 @@
 import Header from "./components/Header"
+import HomeScreen from "./screens/HomeScreen"
 
 function App() {
 
   return (
     <>
       <Header/>
-      <h1>Secure Access</h1>
+      <HomeScreen/>
     </>
   )
 }
