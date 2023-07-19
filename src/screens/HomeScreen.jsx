@@ -3,7 +3,7 @@ import Hero from "../components/Hero"
 const HomeScreen = () => {
   return (
     <div>
-        <Hero/>     
+        <Hero/>    
     </div>
   )
 }
