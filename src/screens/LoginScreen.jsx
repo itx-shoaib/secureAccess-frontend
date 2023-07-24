@@ -1,18 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import {useDispatch, useSelector} from "react-redux";
 import {useLoginMutation} from "../slices/userApiSlice"
 import {setCredentials} from "../slices/authSlice"
 import { toast } from 'react-toastify';
+import { useFormik } from "formik";
+import * as yup from "yup";
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const schema = yup.object().shape({
+  email: yup.string()
+  .email("Provide a valid email address")
+  .required("Email is required"),
+password: yup.string().required("Password is required"),
+});
 
+
+const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,36 +27,55 @@ const LoginScreen = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
+
   useEffect(() => {
     if (userInfo) {
       navigate('/');
     }
   }, [navigate, userInfo]);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate('/');
-    } catch (err) {
-      toast.error(err?.data?.message || err.error);
-    }
-  };
+  // const submitHandler = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await login({ email, password }).unwrap();
+  //     dispatch(setCredentials({ ...res }));
+  //     navigate('/');
+  //   } catch (err) {
+  //     toast.error(err?.data?.message || err.error);
+  //   }
+  // };
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      try {
+        const res = await login({ email: values.email, password: values.password }).unwrap();
+        dispatch(setCredentials({ ...res }));
+        navigate('/');
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    },
+  });
 
   return (
     <FormContainer>
       <h1>Sign In</h1>
 
-      <Form onSubmit={submitHandler}>
+      <Form onSubmit={formik.handleSubmit}>
         <Form.Group className='my-2' controlId='email'>
           <Form.Label>Email Address</Form.Label>
           <Form.Control
             type='email'
             placeholder='Enter email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formik.values.email}
+            {...formik.getFieldProps('email')}
           ></Form.Control>
+          <small>{formik.errors.email}</small>
         </Form.Group>
 
         <Form.Group className='my-2' controlId='password'>
@@ -57,9 +83,10 @@ const LoginScreen = () => {
           <Form.Control
             type='password'
             placeholder='Enter password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formik.values.password}
+            {...formik.getFieldProps('password')}
           ></Form.Control>
+          <small>{formik.errors.password}</small>
         </Form.Group>
 
         <Button disabled={isLoading} type='submit' variant='primary' className='mt-3'>
