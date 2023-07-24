@@ -21,12 +21,14 @@ import ProfileScreen from './screens/ProfileScreen.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
-      <Route index={true} path='/' element={<HomeScreen />} />
-      <Route path='/login' element={<LoginScreen />} />
-      <Route path='/register' element={<RegisterScreen />} />
+    {/* Protected Route */}
        <Route path='' element={<PrivateRoute />}>
+        <Route index={true} path='/' element={<HomeScreen />} />
         <Route path='/profile' element={<ProfileScreen />} />
       </Route>
+      {/* Protected Route END */}
+      <Route path='/login' element={<LoginScreen />} />
+      <Route path='/register' element={<RegisterScreen />} />
     </Route>
   )
 );
