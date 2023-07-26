@@ -16,6 +16,7 @@ import RegisterScreen from './screens/RegisterScreen.jsx';
 import store from "./store"
 import PrivateRoute from './components/PrivateRoute.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
+import ChatMeScreen from './screens/ChatMeScreen.jsx';
 
 
 const router = createBrowserRouter(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
        <Route path='' element={<PrivateRoute />}>
         <Route index={true} path='/' element={<HomeScreen />} />
         <Route path='/profile' element={<ProfileScreen />} />
+        <Route path='/chatme' element={<ChatMeScreen />} />
       </Route>
       {/* Protected Route END */}
       <Route path='/login' element={<LoginScreen />} />
